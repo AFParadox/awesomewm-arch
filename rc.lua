@@ -18,6 +18,8 @@ local hotkeys_popup = require("awful.hotkeys_popup")
 -- when client with a matching name is opened:
 require("awful.hotkeys_popup.keys")
 
+local dpi = beautiful.xresources.apply_dpi
+
 -- Picom
 awful.spawn.with_shell("picom --experimental-backends --config ~/.config/picom/picom.conf")
 
@@ -199,18 +201,29 @@ awful.screen.connect_for_each_screen(function(s)
         buttons = tasklist_buttons
     }
 
+    awful.wibox({
+        screen = s,
+        height = 4,
+        bg = "#00000000", -- fully transparent
+        ontop = false,
+        visible = true,
+        border_width = 0
+    })
+
+
     -- Create the wibox
     s.mywibox = awful.wibar({ 
         position = "top",
         screen = s,
         height = beautiful.wibar_height,
+        width = s.geometry.width - 20,
         bg = beautiful.wibar_bg,
         fg = beautiful.wibar_fg,
         shape = beautiful.wibar_shape,
         border_width = beautiful.wibar_border_width or 0,
         border_color = beautiful.wibar_border_color or "#000000",
         opacity = beautiful.wibar_opacity or 1,
-        margins = 4,
+        margins = { top = dpi(7), left = dpi(8), right = dpi(8), bottom = 0 },
      })
 
     -- Add widgets to the wibox
@@ -364,7 +377,7 @@ clientkeys = gears.table.join(
             c:raise()
         end,
         {description = "toggle fullscreen", group = "client"}),
-    awful.key({ modkey, "Shift"   }, "c",      function (c) c:kill()                         end,
+    awful.key({ modkey,    }, "q",      function (c) c:kill()                         end,
               {description = "close", group = "client"}),
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ,
               {description = "toggle floating", group = "client"}),
